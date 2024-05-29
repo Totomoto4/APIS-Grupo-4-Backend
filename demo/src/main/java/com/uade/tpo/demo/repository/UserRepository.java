@@ -14,11 +14,20 @@ public class UserRepository {
     private final EntityManager entityManager;
 
     @Autowired
-    public UserRepository(EntityManager entityManager) {this.entityManager = entityManager;}
+    public UserRepository(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
 
     public List<User> buscarTodos() {
         TypedQuery<User> theQuery = entityManager.createQuery("FROM User ", User.class);
 
         return theQuery.getResultList();
     }
+
+    public User buscarUnico(String username) {
+        TypedQuery<User> theQuery = entityManager.createQuery("FROM User WHERE username = :username", User.class);
+        theQuery.setParameter("username", username);
+        return theQuery.getSingleResult();
+    }
+
 }
