@@ -1,6 +1,7 @@
 package com.uade.tpo.demo.repository;
 
 import com.uade.tpo.demo.entity.User;
+import com.uade.tpo.demo.entity.UserDTO;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +25,13 @@ public class UserRepository {
         return theQuery.getResultList();
     }
 
-    public User buscarUnico(String username) {
-        TypedQuery<User> theQuery = entityManager.createQuery("FROM User WHERE username = :username", User.class);
-        theQuery.setParameter("username", username);
+    public User buscarUnico(String userEmail) {
+        TypedQuery<User> theQuery = entityManager.createQuery("FROM User WHERE email = :userEmail", User.class);
+        theQuery.setParameter("userEmail", userEmail);
         return theQuery.getSingleResult();
     }
 
+    public void crearUser(User userCreado) {
+        entityManager.persist(userCreado);
+    }
 }
