@@ -1,0 +1,15 @@
+com\uade\tpo\demo\repository\ProductRepository.class
+com\uade\tpo\demo\exceptions\UserNotFoundException.class
+com\uade\tpo\demo\controller\ProductController.class
+com\uade\tpo\demo\service\ProductService.class
+com\uade\tpo\demo\controller\UserController.class
+com\uade\tpo\demo\entity\PasswordHasher.class
+com\uade\tpo\demo\controller\GlobalExceptionHandler.class
+com\uade\tpo\demo\entity\Product.class
+com\uade\tpo\demo\entity\UserDTO.class
+com\uade\tpo\demo\service\UserService.class
+com\uade\tpo\demo\entity\UserAccess.class
+com\uade\tpo\demo\DemoApplication.class
+com\uade\tpo\demo\entity\User.class
+com\uade\tpo\demo\exceptions\UserEmailDuplicateException.class
+com\uade\tpo\demo\repository\UserRepository.class
