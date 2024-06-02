@@ -1,6 +1,9 @@
 package com.uade.tpo.demo.controller;
 
 import com.uade.tpo.demo.entity.Product;
+import com.uade.tpo.demo.entity.ProductRequest;
+import com.uade.tpo.demo.exceptions.ProductDuplicateException;
+import com.uade.tpo.demo.exceptions.ProductNotFoundException;
 import com.uade.tpo.demo.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
