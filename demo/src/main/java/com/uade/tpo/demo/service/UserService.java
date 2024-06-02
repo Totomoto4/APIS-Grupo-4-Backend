@@ -20,11 +20,7 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public List<User> buscarTodosUsuarios(){
-        return userRepository.buscarTodos();
-    }
-
-    private User buscarUsuarioUnico(String userEmail) { return userRepository.buscarUnico(userEmail);}
+    public User buscarUsuarioUnico(String userEmail) { return userRepository.buscarUnico(userEmail);}
 
     public boolean checkUser(UserAccess userAccess) throws UserNotFoundException {
         String userEmail = userAccess.getEmail();

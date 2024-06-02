@@ -20,9 +20,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/users")
-    public List<User> buscarTodosUsers() {return userService.buscarTodosUsuarios();}
-
     @GetMapping("/loginUser")
     public boolean checkUser(@RequestBody UserAccess userAccess) throws UserNotFoundException {
         return userService.checkUser(userAccess);}

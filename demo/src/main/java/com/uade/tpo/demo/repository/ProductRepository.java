@@ -1,27 +1,16 @@
 package com.uade.tpo.demo.repository;
 
 import com.uade.tpo.demo.entity.Product;
-import com.uade.tpo.demo.entity.User;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-@Repository
-public class ProductRepository {
+public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    private final EntityManager entityManager;
+    @Query("select p from Product p")
+    List<Product> findAll();
 
-    @Autowired
-    public ProductRepository(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
-
-    public List<Product> buscarTodos() {
-        TypedQuery<Product> theQuery = entityManager.createQuery("FROM Product ", Product.class);
-
-        return theQuery.getResultList();
-    }
+    @Query("select p from Product p where p.name = ?1")
+    List<Product> findByName(String name);
 }
