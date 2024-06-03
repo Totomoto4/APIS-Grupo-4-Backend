@@ -8,8 +8,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class OrderRepository {
 
+
+    private final EntityManager entityManager;
+
     @Autowired
-    EntityManager entityManager;
+    public OrderRepository(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
 
     public void registrarOrden(Order order){
         this.entityManager.persist(order);

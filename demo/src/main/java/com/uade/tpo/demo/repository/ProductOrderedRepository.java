@@ -9,8 +9,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class ProductOrderedRepository {
 
+    
+    private final EntityManager entityManager;
+
     @Autowired
-    EntityManager entityManager;
+    public ProductOrderedRepository(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
 
     public void registrarProductOrdered(ProductOrdered productOrdered){
         this.entityManager.persist(productOrdered);
