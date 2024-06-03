@@ -21,7 +21,7 @@ public class OrderController {
     @Autowired
     private UserService userService;
 
-    @PostMapping()
+    @PostMapping("/crearOrden")
     public Order registrarOrden(@RequestBody OrderRequest datosOrden) throws OrderNotPossibleException {
         //Verificamos que exista el usuario
         Optional<User> usuario = Optional.ofNullable(userService.buscarUsuarioUnico(datosOrden.getUserEmail()));

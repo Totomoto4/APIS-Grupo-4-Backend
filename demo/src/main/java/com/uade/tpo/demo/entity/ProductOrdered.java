@@ -24,4 +24,10 @@ public class ProductOrdered {
     @Column(name = "PRODUCT_ORDERED_QUANTITY")
     private int quantity;
 
+    public ProductOrdered(long orderId, String name, float price, int quantity) {
+        this.orderId = orderId;
+        this.name = name;
+        this.price = price;
+        this.quantity = quantity;
+    }
 }

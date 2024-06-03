@@ -1,25 +1,33 @@
 package com.uade.tpo.demo.service;
 
-import com.uade.tpo.demo.entity.Order;
-import com.uade.tpo.demo.entity.OrderRequest;
-import com.uade.tpo.demo.entity.Product;
-import com.uade.tpo.demo.entity.User;
+import com.uade.tpo.demo.entity.*;
+import com.uade.tpo.demo.repository.OrderRepository;
+import com.uade.tpo.demo.repository.ProductOrderedRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
 public class OrderService {
 
+    @Autowired
+    private ProductService productService;
+
+    @Autowired
+    private OrderRepository orderRepository;
+    private ProductOrderedRepository productOrderedRepository;
+
     public Order registrarOrden(OrderRequest datosOrden, User user) {
-        //Creamos el hasmap de productos
+        //Creamos el hashmap de productos
         HashMap<Product,Integer> products = new HashMap<>();
 
         for (Map.Entry<Long, Integer> entry : datosOrden.getProducts().entrySet()) {
-            Long key = entry.getKey();
-            Integer value = entry.getValue();
-            System.out.println("Clave: " + key + ", Valor: " + value);
+            Product producto = productService.getProductById(entry.getKey());
+            products.put(producto,entry.getValue());
         }
 
         //Creamos la Orden
@@ -29,12 +37,26 @@ public class OrderService {
                 datosOrden.getTotal(),
                 datosOrden.getCardNumber(),
                 datosOrden.getAddress(),
-
+                products
         );
 
         //Creamos los ProductOrder
+        List<ProductOrdered> productosPedidos = new ArrayList<>();
+        for (Map.Entry<Product, Integer> entry : products.entrySet()){
+            ProductOrdered productoPedido = new ProductOrdered(
+                    order.getId(),
+                    entry.getKey().getName(),
+                    entry.getKey().getPrice(),
+                    entry.getValue());
+            productosPedidos.add(productoPedido);
+        }
 
         //Persistimos
+        orderRepository.registrarOrden(order);
+        for (ProductOrdered productoPedido: productosPedidos){
+            productOrderedRepository.registrarProductOrdered(productoPedido);
+        }
 
+        return order;
     }
 }
