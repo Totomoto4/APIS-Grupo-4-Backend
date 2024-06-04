@@ -5,11 +5,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Data
 public class ProductRequest {
-    private Long id;
     private String name;
     private String description;
     private float price;
-    private MultipartFile imageUrl;
+    private MultipartFile image;
     private String category;
     private int stock;
 }

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,37 +35,9 @@ public class ProductController {
     @PostMapping
     public ResponseEntity<Object> createProduct(@ModelAttribute ProductRequest productRequest) throws ProductDuplicateException, IOException {
         Product result = productService.createProduct(productRequest);
-        return ResponseEntity.created(URI.create("/products/" + result.getId())).body(result);
+        return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
-    @GetMapping("/{id}/image")
-    public ResponseEntity<Resource> getProductImage(@PathVariable Long id) throws IOException {
-        Product product = productService.getProductById(id);
-        if (product == null) {
-            return ResponseEntity.notFound().build();
-        }
 
-        String imageUrl = product.getImageUrl();
-        if (imageUrl == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Path filePath = Paths.get("C:/Users/Panchi/Desktop/APIS-Grupo-4-Backend/demo/product-images").resolve(imageUrl.substring(imageUrl.lastIndexOf("/") + 1));
-
-        Resource resource = new UrlResource(filePath.toUri());
-        if (!resource.exists() || !resource.isReadable()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        String contentType = Files.probeContentType(filePath);
-        if (contentType == null) {
-            contentType = "application/octet-stream";
-        }
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(contentType))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
-                .body(resource);
-    }
     @PutMapping("/{productId}")
     public ResponseEntity<Object> updateProductAttribute(@PathVariable Long productId, @RequestBody ProductRequest updatedAttributes) {
         try {

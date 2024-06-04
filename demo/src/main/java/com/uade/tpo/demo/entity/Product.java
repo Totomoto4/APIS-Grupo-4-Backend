@@ -22,13 +22,13 @@ public class Product {
     @Column(name = "PRODUCT_PRICE")
     private float price;
 
-    @Column(name = "PRODUCT_IMAGE_URL")
-    private String imageUrl;
-
     @Column(name = "PRODUCT_CATEGORY")
     private String category;
 
     @Column(name = "PRODUCT_STOCK")
     private int stock;
+
+    @Transient
+    private Image imagen;
 
 }

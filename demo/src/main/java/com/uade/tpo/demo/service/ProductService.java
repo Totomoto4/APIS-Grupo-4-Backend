@@ -1,5 +1,6 @@
 package com.uade.tpo.demo.service;
 
+import com.uade.tpo.demo.entity.Image;
 import com.uade.tpo.demo.entity.Product;
 import com.uade.tpo.demo.entity.ProductRequest;
 import com.uade.tpo.demo.exceptions.ProductDuplicateException;
@@ -24,6 +25,9 @@ public class ProductService {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private ImageService imageService;
+
     public List<Product> buscarTodosProducts() {
         return productRepository.findAll();
     }
@@ -31,27 +35,20 @@ public class ProductService {
     public Product createProduct(ProductRequest productRequest) throws ProductDuplicateException, IOException {
         List<Product> products = productRepository.findByName(productRequest.getName());
         if (products.isEmpty()) {
+            //Guardamos producto
             Product newProduct = new Product();
             newProduct.setName(productRequest.getName());
             newProduct.setDescription(productRequest.getDescription());
             newProduct.setPrice(productRequest.getPrice());
             newProduct.setCategory(productRequest.getCategory());
             newProduct.setStock(productRequest.getStock());
+            Product savedProduct =  productRepository.save(newProduct);
 
-            // Guardar el archivo de imagen
-            MultipartFile imageFile = productRequest.getImageUrl();
-            String fileName = imageFile.getOriginalFilename();
-            String fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1);
-            String newFileName = UUID.randomUUID().toString() + "." + fileExtension;
-            Path filePath = Paths.get("product-images", newFileName);
-            Files.createDirectories(filePath.getParent());
-            Files.copy(imageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+            //Guardamos imagen
+            imageService.uploadImage(productRequest.getImage());
 
-            // Establecer la URL de acceso a la imagen
-            String imageUrl = "/product-images/" + newFileName;
-            newProduct.setImageUrl(imageUrl);
+            return savedProduct;
 
-            return productRepository.save(newProduct);
         }
         throw new ProductDuplicateException();
     }
