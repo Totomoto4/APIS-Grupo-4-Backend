@@ -18,13 +18,15 @@ public class Image {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long productId;
+    @OneToOne
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
 
     private String name;
 
     private String type;
 
     @Lob
-    @Column(name = "imagedata", length = 1000)
+    @Column(name = "imagedata", columnDefinition = "LONGBLOB")
     private byte[] imageData;
 }

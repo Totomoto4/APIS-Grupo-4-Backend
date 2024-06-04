@@ -6,6 +6,7 @@ import com.uade.tpo.demo.entity.ProductRequest;
 import com.uade.tpo.demo.exceptions.ProductDuplicateException;
 import com.uade.tpo.demo.exceptions.ProductNotFoundException;
 import com.uade.tpo.demo.repository.ProductRepository;
+import com.uade.tpo.demo.util.ImageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,20 +36,27 @@ public class ProductService {
     public Product createProduct(ProductRequest productRequest) throws ProductDuplicateException, IOException {
         List<Product> products = productRepository.findByName(productRequest.getName());
         if (products.isEmpty()) {
+            //Creamos producto
+            Product newProduct = Product.builder()
+                    .name(productRequest.getName())
+                    .description(productRequest.getDescription())
+                    .price(productRequest.getPrice())
+                    .category(productRequest.getCategory())
+                    .stock(productRequest.getStock())
+                    .build();
             //Guardamos producto
-            Product newProduct = new Product();
-            newProduct.setName(productRequest.getName());
-            newProduct.setDescription(productRequest.getDescription());
-            newProduct.setPrice(productRequest.getPrice());
-            newProduct.setCategory(productRequest.getCategory());
-            newProduct.setStock(productRequest.getStock());
-            Product savedProduct =  productRepository.save(newProduct);
+            productRepository.save(newProduct);
 
             //Guardamos imagen
-            imageService.uploadImage(productRequest.getImage());
+            Image newImage = Image.builder()
+                    .product(newProduct)
+                    .name(productRequest.getImage().getOriginalFilename())
+                    .type(productRequest.getImage().getContentType())
+                    .imageData(ImageUtil.compressImage(productRequest.getImage().getBytes())).build();
 
-            return savedProduct;
+            imageService.uploadImage(newImage);
 
+            return newProduct;
         }
         throw new ProductDuplicateException();
     }

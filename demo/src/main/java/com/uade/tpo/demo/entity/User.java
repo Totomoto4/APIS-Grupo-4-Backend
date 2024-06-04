@@ -1,9 +1,11 @@
 package com.uade.tpo.demo.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 @Entity
 @Table(name = "USERS")
 public class User {
@@ -11,7 +13,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "USER_ID")
-    private int id;
+    private Long id;
 
     @Column(name = "USER_USERNAME")
     private String username;

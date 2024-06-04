@@ -20,7 +20,7 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public Optional<User> buscarUsuarioUnico(String userEmail) { return userRepository.buscarUnico(userEmail);}
+    public Optional<User> buscarUsuarioUnico(String userEmail) { return userRepository.findByEmail(userEmail);}
 
     public boolean checkUser(UserAccess userAccess) throws UserNotFoundException {
         String userEmail = userAccess.getEmail();
@@ -48,7 +48,7 @@ public class UserService {
 
         //verificamos si ya tenemos un usario con ese email
         if (!checkEmailRepetido(userCreado.getEmail())){
-            userRepository.crearUser(userCreado);
+            userRepository.save(userCreado);
             System.out.println("Usuario guardado con exito");
             return new UserDTO(userCreado);
         } else {

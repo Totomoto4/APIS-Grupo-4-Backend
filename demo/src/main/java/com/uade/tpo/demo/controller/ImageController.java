@@ -18,7 +18,7 @@ public class ImageController {
 
     @Autowired
     private ImageService imageService;
-
+    /*
     @PostMapping
     public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile file) throws IOException {
         ImageUploadResponse response = imageService.uploadImage(file);
@@ -42,6 +42,6 @@ public class ImageController {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.valueOf("image/png"))
                 .body(image);
-    }
+    }*/
 
 }
