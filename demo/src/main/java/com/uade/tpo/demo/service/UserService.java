@@ -20,31 +20,24 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public User buscarUsuarioUnico(String userEmail) { return userRepository.buscarUnico(userEmail);}
+    public Optional<User> buscarUsuarioUnico(String userEmail) { return userRepository.buscarUnico(userEmail);}
 
     public boolean checkUser(UserAccess userAccess) throws UserNotFoundException {
         String userEmail = userAccess.getEmail();
         String posiblePassword = userAccess.getPassword();
-        try {
-            User usuarioBuscado = buscarUsuarioUnico(userEmail);
-            if(PasswordHasher.checkPassword(posiblePassword, usuarioBuscado.getPasswordHash())){
-                return true;
-            } else {
-                throw new RuntimeException();
-            }
-        } catch (Exception e){
-            throw new UserNotFoundException();
-        }
+
+        //Busco si hay un usuario con ese email
+        Optional<User> userEncontrado = this.buscarUsuarioUnico(userEmail);
+
+        //Si lo encontró y coincide el password devuelve true, si no false
+        return userEncontrado.isPresent() &&
+                PasswordHasher.checkPassword(posiblePassword, userEncontrado.get().getPasswordHash());
+
     }
 
     //Devuelve true si esta
     private boolean checkEmailRepetido(String userEmail) {
-        try {
-            User user =  buscarUsuarioUnico(userEmail);
-            return true;
-        } catch (Exception e){
-            return false;
-        }
+        return buscarUsuarioUnico(userEmail).isPresent();
     }
 
     @Transactional

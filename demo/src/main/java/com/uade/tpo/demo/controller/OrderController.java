@@ -21,14 +21,16 @@ public class OrderController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/crearOrden")
+    @PostMapping("/createOrder")
     public Order registrarOrden(@RequestBody OrderRequest datosOrden) throws OrderNotPossibleException {
         //Verificamos que exista el usuario
-        Optional<User> usuario = Optional.ofNullable(userService.buscarUsuarioUnico(datosOrden.getUserEmail()));
+        Optional<User> usuario = userService.buscarUsuarioUnico(datosOrden.getUserEmail());
         if (usuario.isPresent()){
             //Generamos Orden
+            System.out.println("Usuario encontrado");
             return orderService.registrarOrden(datosOrden, usuario.get());
         } else {
+            System.out.println("No se encontro el user");
             throw new OrderNotPossibleException();
         }
     };

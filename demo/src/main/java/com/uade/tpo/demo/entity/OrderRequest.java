@@ -15,7 +15,7 @@ public class OrderRequest {
 
     private float total;
 
-    private int cardNumber;
+    private long cardNumber;
 
     private String address;
 

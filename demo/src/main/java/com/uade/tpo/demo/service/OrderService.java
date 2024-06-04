@@ -19,15 +19,27 @@ public class OrderService {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
     private ProductOrderedRepository productOrderedRepository;
 
     public Order registrarOrden(OrderRequest datosOrden, User user) {
-        //Creamos el hashmap de productos
+        //Creamos el hashmap de productos y verificamos disponibilidad
         HashMap<Product,Integer> products = new HashMap<>();
 
         for (Map.Entry<Long, Integer> entry : datosOrden.getProducts().entrySet()) {
             Product producto = productService.getProductById(entry.getKey());
-            products.put(producto,entry.getValue());
+            if(producto.getStock() >= entry.getValue()){
+                products.put(producto,entry.getValue());
+            } else {
+                throw new RuntimeException();
+            }
+
+        }
+
+        //Si no hay error de disponibilidad en ningun producto, modificamos el stock.
+        for (Map.Entry<Long, Integer> entry : datosOrden.getProducts().entrySet()) {
+            productService.reduceQuantity(entry.getKey(),entry.getValue());
         }
 
         //Creamos la Orden
@@ -40,11 +52,16 @@ public class OrderService {
                 products
         );
 
+        //Persistimos Orden
+        orderRepository.registrarOrden(order);
+        long orderId = order.getId();
+        System.out.println("Order ID: " + orderId);
+
         //Creamos los ProductOrder
         List<ProductOrdered> productosPedidos = new ArrayList<>();
         for (Map.Entry<Product, Integer> entry : products.entrySet()){
             ProductOrdered productoPedido = new ProductOrdered(
-                    order.getId(),
+                    orderId,
                     entry.getKey().getName(),
                     entry.getKey().getPrice(),
                     entry.getValue());
@@ -52,9 +69,10 @@ public class OrderService {
         }
 
         //Persistimos
-        orderRepository.registrarOrden(order);
+        System.out.println("Orden registrada!");
         for (ProductOrdered productoPedido: productosPedidos){
             productOrderedRepository.registrarProductOrdered(productoPedido);
+            System.out.println(productoPedido);
         }
 
         return order;

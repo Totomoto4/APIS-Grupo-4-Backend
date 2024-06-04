@@ -55,10 +55,12 @@ public class ProductService {
         }
         throw new ProductDuplicateException();
     }
+
     public Product getProductById(Long id) {
         Optional<Product> optionalProduct = productRepository.findById(id);
         return optionalProduct.orElse(null);
     }
+
     public Product updateProductAttribute(Long productId, ProductRequest updatedAttributes) throws ProductNotFoundException {
         Product existingProduct = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException("Product not found with ID: " + productId));
@@ -83,4 +85,9 @@ public class ProductService {
         // Si el producto existe, eliminarlo
         productRepository.deleteById(productId);
     }
+
+    protected void reduceQuantity(Long productId, int quantity){
+        this.productRepository.reduceQuantity(productId, quantity);
+    }
+
 }

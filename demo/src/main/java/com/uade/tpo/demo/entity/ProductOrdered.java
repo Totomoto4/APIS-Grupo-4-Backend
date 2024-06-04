@@ -2,9 +2,11 @@ package com.uade.tpo.demo.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@NoArgsConstructor
 public class ProductOrdered {
 
     @Id
@@ -23,6 +25,7 @@ public class ProductOrdered {
 
     @Column(name = "PRODUCT_ORDERED_QUANTITY")
     private int quantity;
+
 
     public ProductOrdered(long orderId, String name, float price, int quantity) {
         this.orderId = orderId;

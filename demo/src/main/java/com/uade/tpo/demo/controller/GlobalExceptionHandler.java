@@ -1,5 +1,6 @@
 package com.uade.tpo.demo.controller;
 
+import com.uade.tpo.demo.exceptions.OrderNotPossibleException;
 import com.uade.tpo.demo.exceptions.UserEmailDuplicateException;
 import com.uade.tpo.demo.exceptions.UserNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<String> handleUserNotFoundException() {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontro un usuario con ese email o contraseña");
+    }
+
+    @ExceptionHandler(OrderNotPossibleException.class)
+    public ResponseEntity<String> handleOrderNotPossibleException() {
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("No se puede procesar la orden. Es posible que no haya stock de algun producto");
     }
 
     // Manejar otras excepciones genéricas

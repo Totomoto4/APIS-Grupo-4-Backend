@@ -5,7 +5,6 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.List;
 
 @Data
 @Entity
@@ -27,7 +26,7 @@ public class Order {
     private float total;
 
     @Column(name = "ORDER_CARD_NUMBER")
-    private int cardNumber;
+    private long cardNumber;
 
     @Column(name = "ORDER_ADDRESS")
     private String address;
@@ -38,7 +37,7 @@ public class Order {
     public Order() {
     }
 
-    public Order(int userId, LocalDateTime timeOfPurchase, float total, int cardNumber, String address, HashMap<Product, Integer> products) {
+    public Order(int userId, LocalDateTime timeOfPurchase, float total, long cardNumber, String address, HashMap<Product, Integer> products) {
         this.userId = userId;
         this.timeOfPurchase = timeOfPurchase;
         this.total = total;
