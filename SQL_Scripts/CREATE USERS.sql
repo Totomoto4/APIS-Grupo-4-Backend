@@ -18,6 +18,8 @@ CREATE TABLE USERS (
 -- Insertar datos en la tabla USERS
 INSERT INTO USERS (USER_USERNAME, USER_NAME, USER_LASTNAME, USER_ADMINISTRATOR, USER_EMAIL, USER_PASSWORD_HASH) VALUES
 ('FranciscoZanon', 'Francisco', 'Zanon', TRUE, 'admin@gmail.com', '12345'),
+('LucasPerez', 'Lucas', 'Zanon', TRUE, 'admin1@gmail.com', '12345'),
+('TizianoGreco', 'Tiziano', 'Perez', TRUE, 'admin2@gmail.com', '12345'),
 ('MariaLopez', 'Maria', 'Lopez', FALSE, 'mariaLopez@gmail.com', 'qwerty'),
 ('JuanPerez', 'Juan', 'Perez', TRUE, 'juanPerez@gmail.com', 'abcde'),
 ('AnaGarcia', 'Ana', 'Garcia', FALSE, 'anaGarcia@gmail.com', 'abcdef'),
