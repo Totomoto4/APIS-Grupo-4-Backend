@@ -21,4 +21,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Transactional
     @Query("update Product p set p.stock = p.stock - :quantity where p.id = :productId and p.stock >= :quantity")
     void reduceQuantity(Long productId, int quantity);
+
+    List<Product> findAllByCategory(String categoryName);
 }

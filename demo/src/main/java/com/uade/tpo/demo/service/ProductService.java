@@ -7,6 +7,7 @@ import com.uade.tpo.demo.exceptions.ProductDuplicateException;
 import com.uade.tpo.demo.exceptions.ProductNotFoundException;
 import com.uade.tpo.demo.repository.ProductRepository;
 import com.uade.tpo.demo.util.ImageUtil;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,6 +34,7 @@ public class ProductService {
         return productRepository.findAll();
     }
 
+    @Transactional
     public Product createProduct(ProductRequest productRequest) throws ProductDuplicateException, IOException {
         List<Product> products = productRepository.findByName(productRequest.getName());
         if (products.isEmpty()) {
@@ -62,37 +64,70 @@ public class ProductService {
     }
 
     public Product getProductById(Long id) {
-        Optional<Product> optionalProduct = productRepository.findById(id);
-        return optionalProduct.orElse(null);
+        Optional<Product> productBuscado = productRepository.findById(id);
+
+        if (productBuscado.isPresent()){
+            return productBuscado.get();
+        } else {
+            throw new ProductNotFoundException();
+        }
     }
 
-    public Product updateProductAttribute(Long productId, ProductRequest updatedAttributes) throws ProductNotFoundException {
-        Product existingProduct = productRepository.findById(productId)
-                .orElseThrow(() -> new ProductNotFoundException("Product not found with ID: " + productId));
+    @Transactional
+    public Product updateProductAttribute(Long productId, ProductRequest updatedAttributes) throws ProductNotFoundException, IOException {
 
-        // Actualizar solo los atributos proporcionados en updatedAttributes
-        if (updatedAttributes.getName() != null) {
-            existingProduct.setName(updatedAttributes.getName());
-        }
-        if (updatedAttributes.getDescription() != null) {
-            existingProduct.setDescription(updatedAttributes.getDescription());
-        }
-        // Aquí continuarías con los demás atributos...
+        Optional<Product> productToUpdate = productRepository.findById(productId);
+        if (productToUpdate.isPresent()){
 
-        return productRepository.save(existingProduct);
-    }
+            // Actualizar solo los atributos proporcionados en updatedAttributes
+            if (updatedAttributes.getName() != null && !updatedAttributes.getName().equals("#null#")) {
+                productToUpdate.get().setName(updatedAttributes.getName());
+            }
+            if (updatedAttributes.getDescription() != null && !updatedAttributes.getDescription().equals("#null#")) {
+                productToUpdate.get().setDescription(updatedAttributes.getDescription());
+            }
+            if (updatedAttributes.getPrice() != null) {
+                productToUpdate.get().setPrice(updatedAttributes.getPrice());
+            }
+            if (updatedAttributes.getCategory() != null && !updatedAttributes.getCategory().equals("#null#")) {
+                productToUpdate.get().setCategory(updatedAttributes.getCategory());
+            }
+            if (updatedAttributes.getStock() != null) {
+                productToUpdate.get().setStock(updatedAttributes.getStock());
+            }
 
-    public void deleteProduct(Long productId) throws ProductNotFoundException {
-        // Verificar si el producto existe
-        if (!productRepository.existsById(productId)) {
+            //Si cambia la imagen
+            if (updatedAttributes.getImage() != null){
+                imageService.updateImage(productToUpdate.get().getId(), updatedAttributes.getImage());
+            }
+
+            return productRepository.save(productToUpdate.get());
+
+        } else {
             throw new ProductNotFoundException("Product not found with ID: " + productId);
         }
-        // Si el producto existe, eliminarlo
-        productRepository.deleteById(productId);
+    }
+
+    @Transactional
+    public void deleteProduct(Long productId) throws ProductNotFoundException {
+        Optional<Product> product = productRepository.findById(productId);
+        if (product.isPresent()) {
+            imageService.deleteImage(productId);
+            productRepository.delete(product.get());
+        } else {
+            throw new ProductNotFoundException("Product not found with id: " + productId);
+        }
     }
 
     protected void reduceQuantity(Long productId, int quantity){
         this.productRepository.reduceQuantity(productId, quantity);
     }
 
+    public List<Product> getProductByCategory(String categoryName) {
+        List<Product> products = productRepository.findAllByCategory(categoryName);
+        if (products.isEmpty()){
+            throw new ProductNotFoundException();
+        }
+        return products;
+    }
 }

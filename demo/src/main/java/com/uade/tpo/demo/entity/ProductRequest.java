@@ -7,8 +7,8 @@ import org.springframework.web.multipart.MultipartFile;
 public class ProductRequest {
     private String name;
     private String description;
-    private float price;
+    private Float price;
     private MultipartFile image;
     private String category;
-    private int stock;
+    private Integer stock;
 }

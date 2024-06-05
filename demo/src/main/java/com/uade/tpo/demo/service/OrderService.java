@@ -1,15 +1,16 @@
 package com.uade.tpo.demo.service;
 
+import com.uade.tpo.demo.controller.OrderNotFoundException;
 import com.uade.tpo.demo.entity.*;
+import com.uade.tpo.demo.exceptions.OrderNotPossibleException;
 import com.uade.tpo.demo.repository.OrderRepository;
 import com.uade.tpo.demo.repository.ProductOrderedRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Service
 public class OrderService {
@@ -26,21 +27,19 @@ public class OrderService {
     @Autowired
     private ProductOrderedRepository productOrderedRepository;
 
-    public Order registrarOrden(OrderRequest datosOrden, User user) {
+    @Transactional
+    public Order registrarOrden(OrderRequest datosOrden, User user) throws OrderNotPossibleException {
 
         //Creamos el hashmap de productos y verificamos disponibilidad
         HashMap<Product,Integer> products = new HashMap<>();
-
-
 
         for (Map.Entry<Long, Integer> entry : datosOrden.getProducts().entrySet()) {
             Product producto = productService.getProductById(entry.getKey());
             if(producto.getStock() >= entry.getValue()){
                 products.put(producto,entry.getValue());
             } else {
-                throw new RuntimeException();
+                throw new OrderNotPossibleException();
             }
-
         }
 
         //Si no hay error de disponibilidad en ningun producto, modificamos el stock.
@@ -51,7 +50,7 @@ public class OrderService {
         //Creamos y persistimos la orden
         Order newOrder = Order.builder()
                 .user(user)
-                .timeOfPurchase(datosOrden.getTimeOfPurchase())
+                .timeOfPurchase(LocalDateTime.now())
                 .total(datosOrden.getTotal())
                 .cardNumber(datosOrden.getCardNumber())
                 .address(datosOrden.getAddress())
@@ -81,5 +80,17 @@ public class OrderService {
         }
 
         return newOrder;
+    }
+
+    public OrderDTO getbyId(Long orderID) throws OrderNotFoundException {
+        Optional<Order> orderBuscada = orderRepository.findById(orderID);
+        if (orderBuscada.isPresent()) {
+            Order order = orderBuscada.get();
+            List<ProductOrdered> productsOrdered = productOrderedRepository.findAllByOrderId(orderID);
+
+            return new OrderDTO(order, productsOrdered);
+        } else {
+            throw new OrderNotFoundException();
+        }
     }
 }

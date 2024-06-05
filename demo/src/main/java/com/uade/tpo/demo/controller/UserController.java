@@ -21,8 +21,11 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/loginUser")
-    public boolean checkUser(@RequestBody UserAccess userAccess) throws UserNotFoundException {
-        return userService.checkUser(userAccess);}
+    public ResponseEntity<UserDTO> checkUser(@RequestBody UserAccess userAccess) throws UserNotFoundException {
+        UserDTO result = userService.checkUser(userAccess);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
 
     @PostMapping("/createUser")
     public ResponseEntity<Object> crearUser(@RequestBody User userCreado) throws UserEmailDuplicateException {

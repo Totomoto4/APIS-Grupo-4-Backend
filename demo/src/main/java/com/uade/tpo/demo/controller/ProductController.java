@@ -27,9 +27,16 @@ public class ProductController {
 
     @Autowired
     private ProductService productService;
+
     @GetMapping()
     public List<Product> buscarTodosProducts(){
         return productService.buscarTodosProducts();
+    }
+
+    @GetMapping("/{productId}")
+    public ResponseEntity<Object> buscarUnicoProducto(@PathVariable Long productId){
+        Product result = productService.getProductById(productId);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
     @PostMapping
@@ -39,22 +46,22 @@ public class ProductController {
     }
 
     @PutMapping("/{productId}")
-    public ResponseEntity<Object> updateProductAttribute(@PathVariable Long productId, @RequestBody ProductRequest updatedAttributes) {
-        try {
-            Product updatedProduct = productService.updateProductAttribute(productId, updatedAttributes);
-            return ResponseEntity.ok(updatedProduct);
-        } catch (ProductNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Object> updateProductAttribute(@PathVariable Long productId, @ModelAttribute ProductRequest updatedAttributes) throws IOException {
+        Product result = productService.updateProductAttribute(productId, updatedAttributes);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
     @DeleteMapping("/{productId}")
     public ResponseEntity<Object> deleteProduct(@PathVariable Long productId) {
-        try {
-            productService.deleteProduct(productId);
-            return ResponseEntity.ok().build();
-        } catch (ProductNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        productService.deleteProduct(productId);
+        String message = "Product with ID " + productId + " has been deleted successfully.";
+        return ResponseEntity.status(HttpStatus.OK).body(message);
+    }
+
+
+    @GetMapping("/category/{categoryName}")
+    public ResponseEntity<Object> buscarProductosPorCategoria(@PathVariable String categoryName) {
+        List<Product> result = productService.getProductByCategory(categoryName);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 }
