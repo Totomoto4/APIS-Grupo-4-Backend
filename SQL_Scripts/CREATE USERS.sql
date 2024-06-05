@@ -14,11 +14,3 @@ CREATE TABLE USERS (
     USER_EMAIL VARCHAR(255) UNIQUE,
     USER_PASSWORD_HASH VARCHAR(255)
 );
-
--- Insertar datos en la tabla USERS
-INSERT INTO USERS (USER_USERNAME, USER_NAME, USER_LASTNAME, USER_ADMINISTRATOR, USER_EMAIL, USER_PASSWORD_HASH) VALUES
-('FranciscoZanon', 'Francisco', 'Zanon', TRUE, 'admin@gmail.com', '12345'),
-('MariaLopez', 'Maria', 'Lopez', FALSE, 'mariaLopez@gmail.com', 'qwerty'),
-('JuanPerez', 'Juan', 'Perez', TRUE, 'juanPerez@gmail.com', 'abcde'),
-('AnaGarcia', 'Ana', 'Garcia', FALSE, 'anaGarcia@gmail.com', 'abcdef'),
-('CarlosMartinez', 'Carlos', 'Martinez', TRUE, 'carlosMartinez@gmail.com', '123456');
