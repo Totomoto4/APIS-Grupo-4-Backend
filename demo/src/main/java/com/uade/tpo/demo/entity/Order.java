@@ -1,12 +1,24 @@
 package com.uade.tpo.demo.entity;
 
 import jakarta.persistence.*;
+<<<<<<< Updated upstream
+=======
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+>>>>>>> Stashed changes
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
 
 @Data
+<<<<<<< Updated upstream
+=======
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+>>>>>>> Stashed changes
 @Entity
 @Table(name = "ORDERS")
 public class Order {
@@ -19,16 +31,16 @@ public class Order {
     @Column(name = "USER_ID")
     private int userId;
 
-    @Column(name = "ORDER_DATE_TIME")
+    @Column(name = "ORDER_DATE_TIME", nullable = false)
     private LocalDateTime timeOfPurchase;
 
-    @Column(name = "ORDER_TOTAL")
+    @Column(name = "ORDER_TOTAL", nullable = false)
     private float total;
 
-    @Column(name = "ORDER_CARD_NUMBER")
+    @Column(name = "ORDER_CARD_NUMBER", nullable = false)
     private long cardNumber;
 
-    @Column(name = "ORDER_ADDRESS")
+    @Column(name = "ORDER_ADDRESS", nullable = false)
     private String address;
 
     @Transient

@@ -8,8 +8,13 @@ public class ProductRequest {
     private Long id;
     private String name;
     private String description;
+<<<<<<< Updated upstream
     private float price;
     private MultipartFile imageUrl;
+=======
+    private Float price;
+    private MultipartFile image;
+>>>>>>> Stashed changes
     private String category;
-    private int stock;
+    private Integer stock;
 }

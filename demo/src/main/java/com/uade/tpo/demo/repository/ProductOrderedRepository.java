@@ -7,7 +7,10 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
+<<<<<<< Updated upstream
 public class ProductOrderedRepository {
 
     private final EntityManager entityManager;
@@ -21,4 +24,9 @@ public class ProductOrderedRepository {
     public void registrarProductOrdered(ProductOrdered productOrdered){
         this.entityManager.persist(productOrdered);
     }
+=======
+public interface ProductOrderedRepository extends JpaRepository<ProductOrdered, Long> {
+
+    List<ProductOrdered> findAllByOrderId(Long orderID);
+>>>>>>> Stashed changes
 }

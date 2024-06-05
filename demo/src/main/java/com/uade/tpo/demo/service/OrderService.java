@@ -1,15 +1,16 @@
 package com.uade.tpo.demo.service;
 
 import com.uade.tpo.demo.entity.*;
+import com.uade.tpo.demo.exceptions.OrderNotFoundException;
+import com.uade.tpo.demo.exceptions.OrderNotPossibleException;
 import com.uade.tpo.demo.repository.OrderRepository;
 import com.uade.tpo.demo.repository.ProductOrderedRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Service
 public class OrderService {
@@ -23,7 +24,13 @@ public class OrderService {
     @Autowired
     private ProductOrderedRepository productOrderedRepository;
 
+<<<<<<< Updated upstream
     public Order registrarOrden(OrderRequest datosOrden, User user) {
+=======
+    @Transactional
+    public Order registrarOrden(OrderRequest datosOrden, User user) throws OrderNotPossibleException {
+
+>>>>>>> Stashed changes
         //Creamos el hashmap de productos y verificamos disponibilidad
         HashMap<Product,Integer> products = new HashMap<>();
 
@@ -32,9 +39,8 @@ public class OrderService {
             if(producto.getStock() >= entry.getValue()){
                 products.put(producto,entry.getValue());
             } else {
-                throw new RuntimeException();
+                throw new OrderNotPossibleException();
             }
-
         }
 
         //Si no hay error de disponibilidad en ningun producto, modificamos el stock.
@@ -42,6 +48,7 @@ public class OrderService {
             productService.reduceQuantity(entry.getKey(),entry.getValue());
         }
 
+<<<<<<< Updated upstream
         //Creamos la Orden
         Order order = new Order(
                 user.getId(),
@@ -56,6 +63,20 @@ public class OrderService {
         orderRepository.registrarOrden(order);
         long orderId = order.getId();
         System.out.println("Order ID: " + orderId);
+=======
+        //Creamos y persistimos la orden
+        Order newOrder = Order.builder()
+                .user(user)
+                .timeOfPurchase(LocalDateTime.now())
+                .total(datosOrden.getTotal())
+                .cardNumber(datosOrden.getCardNumber())
+                .address(datosOrden.getAddress())
+                .products(products)
+                .build();
+        orderRepository.save(newOrder);
+        long orderId = newOrder.getId();
+        System.out.println("Order ID: " + newOrder.getId());
+>>>>>>> Stashed changes
 
         //Creamos los ProductOrder
         List<ProductOrdered> productosPedidos = new ArrayList<>();
@@ -76,5 +97,17 @@ public class OrderService {
         }
 
         return order;
+    }
+
+    public OrderDTO getbyId(Long orderID) throws OrderNotFoundException {
+        Optional<Order> orderBuscada = orderRepository.findById(orderID);
+        if (orderBuscada.isPresent()){
+            Order order = orderBuscada.get();
+            List<ProductOrdered> productsOrdered = productOrderedRepository.findAllByOrderId(orderID);
+
+            return new OrderDTO(order, productsOrdered );
+        } else {
+            throw new OrderNotFoundException();
+        }
     }
 }

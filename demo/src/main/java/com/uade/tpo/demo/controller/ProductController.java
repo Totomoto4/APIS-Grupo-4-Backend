@@ -26,10 +26,6 @@ public class ProductController {
 
     @Autowired
     private ProductService productService;
-    @GetMapping()
-    public List<Product> buscarTodosProducts(){
-        return productService.buscarTodosProducts();
-    }
 
     @PostMapping
     public ResponseEntity<Object> createProduct(@ModelAttribute ProductRequest productRequest) throws ProductDuplicateException, IOException {
@@ -43,6 +39,7 @@ public class ProductController {
             return ResponseEntity.notFound().build();
         }
 
+<<<<<<< Updated upstream
         String imageUrl = product.getImageUrl();
         if (imageUrl == null) {
             return ResponseEntity.notFound().build();
@@ -73,15 +70,37 @@ public class ProductController {
         } catch (ProductNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
+=======
+    @GetMapping()
+    public ResponseEntity<Object> buscarTodosProducts(){
+        List<Product> result = productService.getAll();
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
+    @GetMapping("/{productId}")
+    public ResponseEntity<Object> buscarUnicoProducto(@PathVariable Long productId){
+        Product result = productService.getProductById(productId);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
+    @GetMapping("/category/{categoryName}")
+    public ResponseEntity<Object> buscarProductosPorCategoria(@PathVariable String categoryName){
+        List<Product> result = productService.getProductByCategory(categoryName);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+>>>>>>> Stashed changes
     }
 
     @DeleteMapping("/{productId}")
     public ResponseEntity<Object> deleteProduct(@PathVariable Long productId) {
-        try {
-            productService.deleteProduct(productId);
-            return ResponseEntity.ok().build();
-        } catch (ProductNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        productService.deleteProduct(productId);
+        String message = "Product with ID " + productId + " has been deleted successfully.";
+        return ResponseEntity.status(HttpStatus.OK).body(message);
     }
+
+    @PutMapping("/{productId}")
+    public ResponseEntity<Object> updateProductAttribute(@PathVariable Long productId, @ModelAttribute ProductRequest updatedAttributes) throws IOException {
+        Product result = productService.updateProductAttribute(productId, updatedAttributes);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
 }

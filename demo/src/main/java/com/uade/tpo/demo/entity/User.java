@@ -1,10 +1,18 @@
 package com.uade.tpo.demo.entity;
 
 import jakarta.persistence.*;
+<<<<<<< Updated upstream
+=======
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+>>>>>>> Stashed changes
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "USERS")
 public class User {
 
@@ -13,7 +21,7 @@ public class User {
     @Column(name = "USER_ID")
     private int id;
 
-    @Column(name = "USER_USERNAME")
+    @Column(name = "USER_USERNAME", nullable = false)
     private String username;
 
     @Column(name = "USER_NAME")

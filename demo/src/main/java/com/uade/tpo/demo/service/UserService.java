@@ -22,17 +22,19 @@ public class UserService {
 
     public Optional<User> buscarUsuarioUnico(String userEmail) { return userRepository.buscarUnico(userEmail);}
 
-    public boolean checkUser(UserAccess userAccess) throws UserNotFoundException {
+    public UserDTO checkUser(UserAccess userAccess) throws UserNotFoundException {
         String userEmail = userAccess.getEmail();
-        String posiblePassword = userAccess.getPassword();
+        String possiblePassword = userAccess.getPassword();
 
-        //Busco si hay un usuario con ese email
+        // Busco si hay un usuario con ese email
         Optional<User> userEncontrado = this.buscarUsuarioUnico(userEmail);
 
-        //Si lo encontró y coincide el password devuelve true, si no false
-        return userEncontrado.isPresent() &&
-                PasswordHasher.checkPassword(posiblePassword, userEncontrado.get().getPasswordHash());
-
+        // Si lo encontró y coincide el password devuelve un UserDTO, si no null
+        if (userEncontrado.isPresent() && PasswordHasher.checkPassword(possiblePassword, userEncontrado.get().getPasswordHash())) {
+            return new UserDTO(userEncontrado.get());
+        } else {
+            throw new UserNotFoundException();
+        }
     }
 
     //Devuelve true si esta

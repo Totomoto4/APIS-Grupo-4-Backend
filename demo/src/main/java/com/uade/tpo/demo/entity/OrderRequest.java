@@ -11,8 +11,6 @@ public class OrderRequest {
 
     private String userEmail;
 
-    private LocalDateTime timeOfPurchase;
-
     private float total;
 
     private long cardNumber;

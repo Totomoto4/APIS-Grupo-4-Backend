@@ -1,12 +1,28 @@
 package com.uade.tpo.demo.entity;
 
 import jakarta.persistence.*;
+<<<<<<< Updated upstream
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Data
 @NoArgsConstructor
+=======
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.Min;
+
+@Data
+@Builder
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "products_ordered")
+>>>>>>> Stashed changes
 public class ProductOrdered {
 
     @Id
@@ -17,13 +33,14 @@ public class ProductOrdered {
     @Column(name = "PRODUCT_ORDERED_ORDER_ID")
     private long orderId;
 
-    @Column(name = "PRODUCT_ORDERED_NAME")
+    @Column(name = "PRODUCT_ORDERED_NAME", nullable = false)
     private String name;
 
-    @Column(name = "PRODUCT_ORDERED_PRICE")
+    @Column(name = "PRODUCT_ORDERED_PRICE", nullable = false)
     private float price;
 
-    @Column(name = "PRODUCT_ORDERED_QUANTITY")
+    @Min(value = 0, message = "El valor pedido no puede ser menor a 0")
+    @Column(name = "PRODUCT_ORDERED_QUANTITY", nullable = false)
     private int quantity;
 
 
