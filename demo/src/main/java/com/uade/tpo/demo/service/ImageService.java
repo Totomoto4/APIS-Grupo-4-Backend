@@ -28,6 +28,7 @@ public class ImageService {
 
     }
 
+    /*
     @Transactional
     public Image getInfoByImageByName(String name) {
         Optional<Image> dbImage = imageRepository.findByName(name);
@@ -37,7 +38,7 @@ public class ImageService {
                 .type(dbImage.get().getType())
                 .imageData(ImageUtil.decompressImage(dbImage.get().getImageData())).build();
 
-    }
+    }*/
 
     @Transactional
     public byte[] getImage(Long productId) throws ImageNotAvailableException {
