@@ -1,5 +1,6 @@
-package com.uade.tpo.demo.entity;
+package com.uade.tpo.demo.entity.dto;
 
+import com.uade.tpo.demo.entity.ProductOrdered;
 import lombok.Data;
 
 @Data

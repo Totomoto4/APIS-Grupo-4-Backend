@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 
 @Data
 public class OrderRequest {
@@ -13,12 +14,11 @@ public class OrderRequest {
 
     private LocalDateTime timeOfPurchase;
 
-    private float total;
-
     private long cardNumber;
 
     private String address;
 
     private HashMap<Long, Integer> products;
 
+    private List<String> codigos;
 }

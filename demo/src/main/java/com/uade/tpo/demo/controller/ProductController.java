@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -22,36 +23,39 @@ import java.nio.file.Paths;
 import java.util.List;
 
 @RestController
-@RequestMapping("/products")
+@RequestMapping()
 public class ProductController {
 
     @Autowired
     private ProductService productService;
 
-    @GetMapping()
+    @GetMapping("/auth/products")
     public List<Product> buscarTodosProducts(){
         return productService.buscarTodosProducts();
     }
 
-    @GetMapping("/{productId}")
+    @GetMapping("/auth/products/{productId}")
     public ResponseEntity<Object> buscarUnicoProducto(@PathVariable Long productId){
         Product result = productService.getProductById(productId);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PostMapping("/products/create")
     public ResponseEntity<Object> createProduct(@ModelAttribute ProductRequest productRequest) throws ProductDuplicateException, IOException {
         Product result = productService.createProduct(productRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
-    @PutMapping("/{productId}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PutMapping("/products/update/{productId}")
     public ResponseEntity<Object> updateProductAttribute(@PathVariable Long productId, @ModelAttribute ProductRequest updatedAttributes) throws IOException {
         Product result = productService.updateProductAttribute(productId, updatedAttributes);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    @DeleteMapping("/{productId}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    @DeleteMapping("/products/delete/{productId}")
     public ResponseEntity<Object> deleteProduct(@PathVariable Long productId) {
         productService.deleteProduct(productId);
         String message = "Product with ID " + productId + " has been deleted successfully.";
@@ -59,7 +63,7 @@ public class ProductController {
     }
 
 
-    @GetMapping("/category/{categoryName}")
+    @GetMapping("auth/products/category/{categoryName}")
     public ResponseEntity<Object> buscarProductosPorCategoria(@PathVariable String categoryName) {
         List<Product> result = productService.getProductByCategory(categoryName);
         return ResponseEntity.status(HttpStatus.OK).body(result);

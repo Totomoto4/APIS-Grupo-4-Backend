@@ -12,22 +12,13 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/image")
+@RequestMapping("/auth")
 public class ImageController {
 
     @Autowired
     private ImageService imageService;
 
-    /*
-    @GetMapping("/info/{name}")
-    public ResponseEntity<?>  getImageInfoByName(@PathVariable("name") String name){
-        Image image = imageService.getInfoByImageByName(name);
-
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(image);
-    }*/
-
-    @GetMapping("/{productId}")
+    @GetMapping("/image/{productId}")
     public ResponseEntity<?>  getImageByName(@PathVariable("productId") Long productId) throws ImageNotAvailableException {
         byte[] image = imageService.getImage(productId);
 

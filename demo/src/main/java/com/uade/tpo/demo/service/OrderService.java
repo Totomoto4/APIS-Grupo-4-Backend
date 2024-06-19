@@ -2,6 +2,7 @@ package com.uade.tpo.demo.service;
 
 import com.uade.tpo.demo.controller.OrderNotFoundException;
 import com.uade.tpo.demo.entity.*;
+import com.uade.tpo.demo.entity.dto.OrderDTO;
 import com.uade.tpo.demo.exceptions.OrderNotPossibleException;
 import com.uade.tpo.demo.repository.OrderRepository;
 import com.uade.tpo.demo.repository.ProductOrderedRepository;
@@ -19,7 +20,7 @@ public class OrderService {
     private ProductService productService;
 
     @Autowired
-    private UserService userService;
+    private CodigosService codigosService;
 
     @Autowired
     private OrderRepository orderRepository;
@@ -31,16 +32,16 @@ public class OrderService {
     public Order registrarOrden(OrderRequest datosOrden, User user) throws OrderNotPossibleException {
 
         //Creamos el hashmap de productos y verificamos disponibilidad
-        HashMap<Product,Integer> products = new HashMap<>();
+        HashMap<Product,Integer> products = crearHashmapProductos(datosOrden.getProducts());
 
-        for (Map.Entry<Long, Integer> entry : datosOrden.getProducts().entrySet()) {
-            Product producto = productService.getProductById(entry.getKey());
-            if(producto.getStock() >= entry.getValue()){
-                products.put(producto,entry.getValue());
-            } else {
-                throw new OrderNotPossibleException();
-            }
+        //Creamos la lista de codigos y reducimos su disponibilidad
+        List<CodigoDescuento> codigoDescuentos = limpiarCodigos(datosOrden.getCodigos());
+        for (CodigoDescuento codigoDescuento : codigoDescuentos){
+            codigosService.reduceByOne(codigoDescuento.getCodigo());
         }
+
+        //Calculamos el total
+        float total = calcularTotal(products, codigoDescuentos);
 
         //Si no hay error de disponibilidad en ningun producto, modificamos el stock.
         for (Map.Entry<Long, Integer> entry : datosOrden.getProducts().entrySet()) {
@@ -51,7 +52,7 @@ public class OrderService {
         Order newOrder = Order.builder()
                 .user(user)
                 .timeOfPurchase(LocalDateTime.now())
-                .total(datosOrden.getTotal())
+                .total(total)
                 .cardNumber(datosOrden.getCardNumber())
                 .address(datosOrden.getAddress())
                 .products(products)
@@ -93,4 +94,58 @@ public class OrderService {
             throw new OrderNotFoundException();
         }
     }
+
+    private float calcularTotal(HashMap<Product, Integer> products, List<CodigoDescuento> codigos) {
+        float totalCalculado = 0;
+        for (Product producto : products.keySet()) {
+            totalCalculado += producto.getPrice() * products.get(producto);
+        }
+
+        float totalDescuento = 0;
+        for (CodigoDescuento codigo : codigos) {
+            if (codigo.getDisponibles() > 0){
+                totalDescuento += totalCalculado * codigo.getDescuento();
+            }
+        }
+
+        totalCalculado -= totalDescuento;
+
+        // Asegurar que el total no sea menor a 0
+        if (totalCalculado < 0) {
+            totalCalculado = 0;
+        }
+
+        return totalCalculado;
+    }
+
+    private HashMap<Product,Integer> crearHashmapProductos(HashMap<Long, Integer> datos) throws OrderNotPossibleException {
+        HashMap<Product,Integer> products = new HashMap<>();
+        for (Map.Entry<Long, Integer> entry : datos.entrySet()) {
+            Product producto = productService.getProductById(entry.getKey());
+            if(producto.getStock() >= entry.getValue()){
+                products.put(producto,entry.getValue());
+            } else {
+                throw new OrderNotPossibleException();
+            }
+        }
+        return products;
+    }
+
+    public float getPreTotal(ConsultaOrden consultaOrden) throws OrderNotPossibleException {
+        HashMap<Product,Integer> productosObtenidos = crearHashmapProductos(consultaOrden.getProductos());
+        List<CodigoDescuento> codigoDescuentos = limpiarCodigos(consultaOrden.getCodigos());
+        return calcularTotal(productosObtenidos, codigoDescuentos);
+    }
+
+    private List<CodigoDescuento> limpiarCodigos(List<String> codigos){
+        List<CodigoDescuento> codigosLimpios = new ArrayList<>();
+        for (String codigo : codigos) {
+            Optional<CodigoDescuento> codigoBuscado = codigosService.getDescuento(codigo.toUpperCase());
+            if (codigoBuscado.isPresent() && !codigosLimpios.contains(codigoBuscado) && codigoBuscado.get().getDisponibles() > 0) {
+                codigosLimpios.add(codigoBuscado.get());
+            }
+        }
+        return codigosLimpios;
+    }
+
 }
