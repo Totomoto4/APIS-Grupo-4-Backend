@@ -2,8 +2,11 @@ package com.uade.tpo.demo.controller;
 
 import com.uade.tpo.demo.entity.Product;
 import com.uade.tpo.demo.entity.ProductRequest;
+import com.uade.tpo.demo.entity.dto.ProductWithImage;
+import com.uade.tpo.demo.exceptions.ImageNotAvailableException;
 import com.uade.tpo.demo.exceptions.ProductDuplicateException;
 import com.uade.tpo.demo.exceptions.ProductNotFoundException;
+import com.uade.tpo.demo.service.ImageService;
 import com.uade.tpo.demo.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -20,6 +23,7 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -28,17 +32,41 @@ public class ProductController {
 
     @Autowired
     private ProductService productService;
+    @Autowired
+    private ImageService imageService;
 
     @GetMapping("/auth/products")
-    public List<Product> buscarTodosProducts(){
-        return productService.buscarTodosProducts();
+    public ResponseEntity<List<ProductWithImage>> buscarTodosProducts() throws ImageNotAvailableException {
+        List<Product> productos = productService.buscarTodosProducts();
+        List<ProductWithImage> productWithImageList = new ArrayList<>();
+        for (Product product : productos){
+            byte[] image = imageService.getImage(product.getId());
+            ProductWithImage productWithImage = new ProductWithImage(product, image);
+            productWithImageList.add(productWithImage);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(productWithImageList);
     }
 
     @GetMapping("/auth/products/{productId}")
-    public ResponseEntity<Object> buscarUnicoProducto(@PathVariable Long productId){
-        Product result = productService.getProductById(productId);
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+    public ResponseEntity<ProductWithImage> buscarUnicoProducto(@PathVariable Long productId) throws ImageNotAvailableException {
+        Product product = productService.getProductById(productId);
+        byte[] image = imageService.getImage(product.getId());
+        ProductWithImage productWithImage = new ProductWithImage(product, image);
+        return ResponseEntity.status(HttpStatus.OK).body(productWithImage);
     }
+
+    @GetMapping("auth/products/category/{categoryName}")
+    public ResponseEntity<List<ProductWithImage>> buscarProductosPorCategoria(@PathVariable String categoryName) throws ImageNotAvailableException {
+        List<Product> productos = productService.getProductByCategory(categoryName);
+        List<ProductWithImage> productWithImageList = new ArrayList<>();
+        for (Product product : productos){
+            byte[] image = imageService.getImage(product.getId());
+            ProductWithImage productWithImage = new ProductWithImage(product, image);
+            productWithImageList.add(productWithImage);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(productWithImageList);
+    }
+
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping("/products/create")
@@ -62,10 +90,4 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(message);
     }
 
-
-    @GetMapping("auth/products/category/{categoryName}")
-    public ResponseEntity<Object> buscarProductosPorCategoria(@PathVariable String categoryName) {
-        List<Product> result = productService.getProductByCategory(categoryName);
-        return ResponseEntity.status(HttpStatus.OK).body(result);
-    }
 }

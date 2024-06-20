@@ -1,4 +1,4 @@
-package com.uade.tpo.demo.security.configs;
+package com.uade.tpo.demo.security;
 
 import jakarta.persistence.Column;
 import lombok.Data;

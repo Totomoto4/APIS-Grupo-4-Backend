@@ -11,7 +11,7 @@ import com.uade.tpo.demo.repository.UserRepository;
 import com.uade.tpo.demo.security.AuthenticationRequest;
 import com.uade.tpo.demo.security.AuthenticationResponse;
 import com.uade.tpo.demo.security.JwtService;
-import com.uade.tpo.demo.security.configs.RegisterRequest;
+import com.uade.tpo.demo.security.RegisterRequest;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;

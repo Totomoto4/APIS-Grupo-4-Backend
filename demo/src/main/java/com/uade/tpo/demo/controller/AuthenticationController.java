@@ -4,14 +4,12 @@ import com.uade.tpo.demo.exceptions.UserEmailDuplicateException;
 import com.uade.tpo.demo.exceptions.UserNotFoundException;
 import com.uade.tpo.demo.security.AuthenticationRequest;
 import com.uade.tpo.demo.security.AuthenticationResponse;
-import com.uade.tpo.demo.security.configs.RegisterRequest;
+import com.uade.tpo.demo.security.RegisterRequest;
 import com.uade.tpo.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/auth")
