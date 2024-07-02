@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 public class OrderRequest {
 
-    private String userEmail;
+    private String email;
 
     private LocalDateTime timeOfPurchase;
 

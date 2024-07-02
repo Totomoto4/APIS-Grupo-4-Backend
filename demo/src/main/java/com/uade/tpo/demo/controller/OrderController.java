@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/order")
+@RequestMapping()
 public class OrderController {
 
     @Autowired
@@ -23,10 +23,10 @@ public class OrderController {
     private UserService userService;
 
 
-    @PostMapping()
+    @PostMapping("/order")
     public ResponseEntity<Object> registrarOrden(@RequestBody OrderRequest datosOrden) throws OrderNotPossibleException {
         //Verificamos que exista el usuario
-        Optional<User> usuario = userService.buscarUsuarioUnico(datosOrden.getUserEmail());
+        Optional<User> usuario = userService.buscarUsuarioUnico(datosOrden.getEmail());
 
         if (usuario.isPresent()){
             //Generamos Orden
@@ -40,13 +40,14 @@ public class OrderController {
         }
     }
 
-    @GetMapping()
+    @PostMapping("auth/order/verify")
     public ResponseEntity<Object> verificarTotal(@RequestBody ConsultaOrden consultaOrden) throws OrderNotPossibleException {
+        System.out.println(consultaOrden.getProductos());
         float result = orderService.getPreTotal(consultaOrden);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    @GetMapping("/{orderid}")
+    @GetMapping("order/{orderid}")
     public ResponseEntity<Object> getOrderById(@PathVariable("orderid") Long id ) throws OrderNotFoundException {
         OrderDTO result = orderService.getbyId(id);
         return ResponseEntity.status(HttpStatus.OK).body(result);

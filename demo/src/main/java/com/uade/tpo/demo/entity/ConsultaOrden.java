@@ -8,6 +8,5 @@ import java.util.List;
 @Data
 public class ConsultaOrden {
     private HashMap<Long, Integer> productos;
-
     private List<String> codigos;
 }

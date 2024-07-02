@@ -18,13 +18,6 @@ public class AuthenticationController {
     @Autowired
     private UserService userService;
 
-    /*
-    @GetMapping("/login")
-    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) throws UserNotFoundException {
-        AuthenticationResponse result = userService.authenticate(request);
-        return ResponseEntity.status(HttpStatus.OK).body(result);
-    }
-    */
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) throws UserNotFoundException {
         AuthenticationResponse result = userService.authenticate(request);

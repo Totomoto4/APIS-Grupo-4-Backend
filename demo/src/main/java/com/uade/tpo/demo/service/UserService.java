@@ -62,6 +62,10 @@ public class UserService {
             var jwtToken = jwtService.generateToken(usuarioNuevo);
             return AuthenticationResponse.builder()
                     .accessToken(jwtToken)
+                    .rol(usuarioNuevo.getRole().getName().name())
+                    .email(usuarioNuevo.getEmail())
+                    .name(usuarioNuevo.getName())
+                    .lastName(usuarioNuevo.getLastName())
                     .build();
         } else {
             throw new UserEmailDuplicateException();
@@ -79,6 +83,10 @@ public class UserService {
             var jwtToken = jwtService.generateToken(user);
             return AuthenticationResponse.builder()
                     .accessToken(jwtToken)
+                    .rol(user.getRole().getName().name())
+                    .email(user.getEmail())
+                    .lastName(user.getLastName())
+                    .name(user.getName())
                     .build();
         } catch (Exception e){
          throw new UserNotFoundException();
