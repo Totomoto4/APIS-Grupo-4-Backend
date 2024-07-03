@@ -69,21 +69,22 @@ public class ProductController {
 
 
     @PreAuthorize("hasAnyRole('ADMIN')")
-    @PostMapping("/products/create")
+    @PostMapping("/products")
     public ResponseEntity<Object> createProduct(@ModelAttribute ProductRequest productRequest) throws ProductDuplicateException, IOException {
+        System.out.println(productRequest);
         Product result = productService.createProduct(productRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
-    @PutMapping("/products/update/{productId}")
+    @PutMapping("/products/{productId}")
     public ResponseEntity<Object> updateProductAttribute(@PathVariable Long productId, @ModelAttribute ProductRequest updatedAttributes) throws IOException {
         Product result = productService.updateProductAttribute(productId, updatedAttributes);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN')")
-    @DeleteMapping("/products/delete/{productId}")
+    @DeleteMapping("/products/{productId}")
     public ResponseEntity<Object> deleteProduct(@PathVariable Long productId) {
         productService.deleteProduct(productId);
         String message = "Product with ID " + productId + " has been deleted successfully.";
